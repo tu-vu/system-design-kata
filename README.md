@@ -22,3 +22,11 @@ Index
   * Operability: Easy for ops to keep the system running smoothly.
   * Simplicity: Easy for new eng to understand the system.
   * Evolvability: Easy for eng to make changes to the system in the future.
+ 
+#### Chapter 2. Data Models and Query Languages <a name="part-1.1"></a>
+
+| Database   | Pros                                                                                             | Cons                                    |
+|:-----------|:---------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------|
+| Relational | Joins support for many-to-one / many-to-many relationships.<br/> Enforcement of records with same structure.   | Heterogenous structure.                                   |
+| Document   | Tree-like structure (1-to-many relationships).<br/> Schema flexibility and better performance due to locality. | Deeply nested structure.<br/> Many-to-many relationships. |
+| Graph      | Interconnected data with many-to-many relationships.<br/> Homogeneous data.                                    | N/A                                                       |
