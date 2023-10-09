@@ -24,7 +24,6 @@ Index
   * Evolvability: Easy for eng to make changes to the system in the future.
  
 #### Chapter 2. Data Models and Query Languages <a name="part-1.1"></a>
-
 | Database   | Pros                                                                                             | Cons                                    |
 |:-----------|:---------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------|
 | Relational | Joins support for many-to-one / many-to-many relationships.<br/> Enforcement of records with same structure.   | Heterogenous structure.                                   |
@@ -41,11 +40,31 @@ Index
   * **Partitioning** aka sharding: splitting a big database into smaller subsets called *partitions*.
 
 #### Chapter 5. Replication <a name="part-2.1"></a>
-
 * Algorithms for maintaining replicas
-  * **Single-leader replication**: one node is the leader, all writes go to the leader, and the leader sends data to all the followers.
+  * **Single-leader replication**:
+  <br/> One node is the leader, all writes go to the leader, and the leader sends data to all the followers.
   ![Single-leader replication](diagrams/single-leader-replication.png)
    *Note: Client can read from leader / followers.*
   * **Multi-leader replication**: To be added.
   * **Leaderless replication**: To be added.
-* Replication lag
+* Handling Node Outages
+  * Follower failure: Follower retains the last transaction that was processed before crash, and request leader for data changes during downtime.
+  * Leader failure: One of the followers is promoted to the new leader, and all other followers are reconfigured to replicate from the new leader.
+* Handling Replication Lag
+  * Clients may read stale data from an async follower that hasn't catched up with the leader. The inconsistency goes away eventually, hence it's called *eventual consistency*.
+  * Problems:
+    * Users see stale data (e.g. data changes from write request wasn't reflected). 
+   ![Replication lag issue #1](diagrams/replication-lag-issue-1.png)
+    Approach: Requires *read-after-write consistency*, which guarantees that after user reloads the page, they will see the data they just submitted.
+    <br/>How?
+      * Read from leader based on some conditions (e.g. read user's own profile picture from leader, otherwise read from follower).
+    * Users see latest data on 1st read, but see old data on 2nd read
+    ![Replication lag issue #2](diagrams/replication-lag-issue-2.png)
+    Approach: Requires *monotonic reads*, which guarantees that after user won't see old data after seeing new data.
+    <br/>How?
+      * Each user make their reads from same replica. 
+    * Users see answer before question (e.g. observer see answer from user 1 before question from user 2)
+    ![Replication lag issue #3](diagrams/replication-lag-issue-3.png)
+    Approach: Requires *consistency prefix reads*, which guarantees that if sequence of writes happens in some order, then client will sees those writes in the same order.
+    <br/>How?
+      * Make writes that are casually related to each other to the same partition.
