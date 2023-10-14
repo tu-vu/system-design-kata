@@ -45,7 +45,21 @@ Index
   <br/> One node is the leader, all writes go to the leader, and the leader sends data to all the followers.
   ![Single-leader replication](diagrams/single-leader-replication.png)
    *Note: Client can read from leader / followers.*
-  * **Multi-leader replication**: To be added.
+  * **Multi-leader replication**:
+    <br/> Each leader in its own datacenter accepts writes, and asynchronously sends data to other leaders.
+    ![Multi-leader replication](diagrams/multi-leader-replication.png)
+    <br /> Pros: 
+      * Performance: Writes can be performed locally on the closest leader.
+      * Tolerate outages: If one datacenter is down, other datacenters can still accept writes.
+    <br /> Cons:
+      * Write conflicts
+        ![Write-confict](diagrams/write-conflict.png)
+        <br /> Approaches: 
+          * Conflict avoidance: ensure writes to same leader.
+          * Convert to consistent state: e.g. pick write with highest ID as winner, and throw away other writes.
+          * Custom conflict resolution logic
+      
+    <br /> Uses cases: Collaborative editing (e.g. Google Docs), multi-player games.
   * **Leaderless replication**: To be added.
 * Handling Node Outages
   * Follower failure: Follower retains the last transaction that was processed before crash, and request leader for data changes during downtime.
